@@ -15,8 +15,8 @@ let ScalaFile =
               }
       }
 
-let publicLibraryFiles =
-      { `project/publish.sbt` = ScalaFile::{
+let publicLibraryFiles  = \(opts: {repo: Text}) ->
+      { `project/sonatype.sbt` = ScalaFile::{
         , contents =
             ''
             addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
@@ -33,11 +33,18 @@ let publicLibraryFiles =
             sbt publishSigned sonatypeBundleRelease
             ''
         }
-      , `version.sbt` = ScalaFile::{
+      , `release.sbt` = ScalaFile::{
         , contents =
             ''
             ThisBuild / scalaVersion := "${ScalaDocker.scalaVersion}"
-            ThisBuild / version := IO.read(new File("VERSION"))
+            ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
+            ThisBuild / scmInfo := Some(
+              ScmInfo(
+                url("https://github.com/timbertson/capsul"),
+                s"scm:git@github.com:timbertson/${opts.repo}.git"
+              )
+            )
+            ${./content/release.sbt as Text}
             ''
         }
       }
@@ -61,7 +68,7 @@ let Files =
 
 let files =
       \(opts : Files.Type) ->
-            publicLibraryFiles
+            publicLibraryFiles { repo = opts.repo }
         /\  strictFiles
         /\  Workflow.files
               Workflow.Files::{
