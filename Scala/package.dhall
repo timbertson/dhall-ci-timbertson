@@ -49,10 +49,13 @@ let strictFiles =
 
 let Workflow = ../Workflow/package.dhall
 
-let Files = { repo : Text, docker : ScalaDocker.Type }
+let Files =
+      { Type = { repo : Text, docker : ScalaDocker.Type }
+      , default.docker = ScalaDocker.default
+      }
 
 let files =
-      \(opts : Files) ->
+      \(opts : Files.Type) ->
             publicLibraryFiles
         /\  strictFiles
         /\  Workflow.files
@@ -65,4 +68,4 @@ let files =
               }
             }
 
-in  { Type = Files, files, ScalaFile, Docker = ScalaDocker }
+in  { Files, files, ScalaFile, Docker = ScalaDocker }
