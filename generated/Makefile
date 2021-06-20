@@ -15,12 +15,14 @@ ci: render lint
 digest:
 	dhall hash --file dhall/files.dhall
 	dhall hash --file Scala/package.dhall
+	dhall hash --file Workflow/package.dhall
 
 .SILENT: eval
 .PHONY: eval
 eval:
 	dhall --ascii --plain --file "dhall/files.dhall" > /dev/null
 	dhall --ascii --plain --file "Scala/package.dhall" > /dev/null
+	dhall --ascii --plain --file "Workflow/package.dhall" > /dev/null
 
 .SILENT: format
 .PHONY: format
@@ -29,12 +31,15 @@ format:
 	dhall --ascii format --transitive "dhall/files.dhall"
 	dhall --ascii --plain --file "Scala/package.dhall" > /dev/null
 	dhall --ascii format --transitive "Scala/package.dhall"
+	dhall --ascii --plain --file "Workflow/package.dhall" > /dev/null
+	dhall --ascii format --transitive "Workflow/package.dhall"
 
 .SILENT: format-only
 .PHONY: format-only
 format-only:
 	dhall --ascii format --transitive "dhall/files.dhall"
 	dhall --ascii format --transitive "Scala/package.dhall"
+	dhall --ascii format --transitive "Workflow/package.dhall"
 
 .SILENT: lint
 .PHONY: lint
@@ -43,6 +48,8 @@ lint:
 	dhall --ascii lint --transitive "dhall/files.dhall"
 	dhall --ascii --plain --file "Scala/package.dhall" > /dev/null
 	dhall --ascii lint --transitive "Scala/package.dhall"
+	dhall --ascii --plain --file "Workflow/package.dhall" > /dev/null
+	dhall --ascii lint --transitive "Workflow/package.dhall"
 
 .SILENT: freeze
 .PHONY: freeze
@@ -51,6 +58,8 @@ freeze:
 	dhall --ascii lint --transitive "dhall/files.dhall"
 	dhall --ascii --plain --file "Scala/package.dhall" > /dev/null
 	dhall --ascii lint --transitive "Scala/package.dhall"
+	dhall --ascii --plain --file "Workflow/package.dhall" > /dev/null
+	dhall --ascii lint --transitive "Workflow/package.dhall"
 
 .SILENT: render
 .PHONY: render
@@ -60,7 +69,7 @@ render:
 .SILENT: bump
 .PHONY: bump
 bump:
-	dhall/bump --to "timbertson/dhall-ci:" --to "timbertson/dhall-ci-git:" --to "timbertson/dhall-ci-dhall:" --to "timbertson/dhall-ci-docker:" --to "timbertson/dhall-render:" --if-affects "dhall/files.dhall" --if-affects "Scala/package.dhall" --freeze-cmd="dhall --ascii freeze --inplace" --allow-unused dependencies/CI.dhall dhall/Meta.dhall dependencies/Render.dhall
+	dhall/bump --to "timbertson/dhall-ci:" --to "timbertson/dhall-ci-git:" --to "timbertson/dhall-ci-dhall:" --to "timbertson/dhall-ci-docker:" --to "timbertson/dhall-render:" --if-affects "dhall/files.dhall" --if-affects "Scala/package.dhall" --if-affects "Workflow/package.dhall" --freeze-cmd="dhall --ascii freeze --inplace" --allow-unused dependencies/CI.dhall dhall/Meta.dhall dependencies/Render.dhall
 
 .SILENT: docs
 .PHONY: docs

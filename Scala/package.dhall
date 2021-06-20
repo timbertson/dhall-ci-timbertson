@@ -1,5 +1,9 @@
 let Render = ../dependencies/Render.dhall
 
+let Docker = ../dependencies/Docker.dhall
+
+let ScalaDocker = ./Docker.dhall
+
 let ScalaFile =
       { Type = Render.TextFile.Type
       , default =
@@ -11,17 +15,24 @@ let publicLibraryFiles =
       { `project/publish.sbt` = ScalaFile::{
         , contents =
             ''
-            addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0-M1")
+            addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
             addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.7")
             ''
         }
       , `project/src/main/scala/PublishSettings.scala` = ScalaFile::{
         , contents = ./content/project/PublishSettings.scala as Text
         }
+      , `release.sh` = Render.Executable::{
+        , contents =
+            ''
+            #!/usr/bin/env bash
+            sbt publishSigned sonatypeBundleRelease
+            ''
+        }
       , `version.sbt` = ScalaFile::{
         , contents =
             ''
-            version := sys.env.getOrElse("VERSION", "0-SNAPSHOT")
+            version := IO.read(new File("VERSION"))
             ''
         }
       }
@@ -36,4 +47,22 @@ let strictFiles =
         }
       }
 
-in  { publicLibraryFiles, strictFiles, ScalaFile }
+let Workflow = ../Workflow/package.dhall
+
+let Files = { repo : Text, docker : ScalaDocker.Type }
+
+let files =
+      \(opts : Files) ->
+            publicLibraryFiles
+        /\  strictFiles
+        /\  Workflow.files
+              Workflow.Files::{
+              , repo = opts.repo
+              , ciScript = [ "sbt 'strict compile' test" ]
+              }
+        /\  { Dockerfile = Render.TextFile::{
+              , contents = Docker.render (ScalaDocker.steps ScalaDocker::{=})
+              }
+            }
+
+in  { Type = Files, files, ScalaFile, Docker = ScalaDocker }

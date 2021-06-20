@@ -16,4 +16,4 @@ you should go there for more details.
 You shouldn't use this repository directly (I'll change things on a whim),
 but it serves as a useful example of a high level `dhall-ci` repository.
 Rather than providing many low-level building blocks, it provides
-a few different archetypes for common repository functionality I want to reuse.
+high level reusable data and functions for different repository types.

@@ -5,7 +5,11 @@ in  { files =
           Meta.Files::{
           , bumpFiles =
               Meta.Files.default.bumpFiles # [ "dependencies/Render.dhall" ]
-          , packages = [ "dhall/files.dhall", "Scala/package.dhall" ]
+          , packages =
+            [ "dhall/files.dhall"
+            , "Scala/package.dhall"
+            , "Workflow/package.dhall"
+            ]
           , readme = Meta.Readme::{
             , repo = "dhall-ci-timbertson"
             , componentDesc = Some "my own personal utilities"

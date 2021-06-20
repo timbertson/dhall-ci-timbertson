@@ -1,1 +1,4 @@
-https://raw.githubusercontent.com/timbertson/dhall-ci/2e1fa95a589c79a289525d5c96955b8ca5eb7f2d/package.dhall sha256:9b16c4079a7daf398e489117061d58512cb8f39e03be10e7c1049f2d6b2e0ff5
+    https://raw.githubusercontent.com/timbertson/dhall-ci/b75f041f01838546175b85fe9850d3926c9d93a0/package.dhall sha256:12954ab5215e3b11c3cb273d5953ceca7e96604d2612e0db2d1f2ffc9b1254e2
+/\  { SelfUpdate =
+        https://raw.githubusercontent.com/timbertson/dhall-ci/b75f041f01838546175b85fe9850d3926c9d93a0/Meta/SelfUpdate.dhall sha256:e804401de803fe82f594f56e731e9e080b72b32cc510a33b16a189a9c1c8e493
+    }
