@@ -5,10 +5,14 @@ let Docker = ../dependencies/Docker.dhall
 let ScalaDocker = ./Docker.dhall
 
 let ScalaFile =
+    -- install with `write` so that we don't have to copy
+    -- generated/ files in during the docker build
       { Type = Render.TextFile.Type
       , default =
               Render.TextFile.default
-          //  { headerFormat = Render.Header.doubleSlash }
+          //  { headerFormat = Render.Header.doubleSlash
+              , install = Render.Install.Write
+              }
       }
 
 let publicLibraryFiles =
@@ -32,7 +36,8 @@ let publicLibraryFiles =
       , `version.sbt` = ScalaFile::{
         , contents =
             ''
-            version := IO.read(new File("VERSION"))
+            ThisBuild / scalaVersion := "${ScalaDocker.scalaVersion}"
+            ThisBuild / version := IO.read(new File("VERSION"))
             ''
         }
       }
@@ -63,7 +68,20 @@ let files =
               , repo = opts.repo
               , ciScript = [ "sbt 'strict compile' test" ]
               }
-        /\  { Dockerfile = Render.TextFile::{
+        /\  { `project/build.properties` = ScalaFile::{
+              , contents =
+                  ''
+                  sbt.version=${ScalaDocker.sbtVersion}
+                  ''
+              }
+            , `.dockerignore` = Render.TextFile::{
+              , contents =
+                  ''
+                  .git
+                  target/
+                  ''
+              }
+            , Dockerfile = Render.TextFile::{
               , contents = Docker.render (ScalaDocker.steps ScalaDocker::{=})
               }
             }

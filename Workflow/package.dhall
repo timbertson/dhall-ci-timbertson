@@ -7,7 +7,7 @@ let Docker = ../dependencies/Docker.dhall
 
 let Render = ../dependencies/Render.dhall
 
-let Git = (../dependencies/Git.dhall).Workflow
+let Git = ../dependencies/Git.dhall
 
 let Bash = CI.Bash
 
@@ -57,7 +57,7 @@ let ci =
                 { build = Workflow.Job::{
                   , runs-on = CI.Workflow.ubuntu
                   , steps =
-                        [ Git.checkout Git.Checkout::{=}
+                        [ Git.Workflow.checkout Git.Workflow.Checkout::{=}
                         , Docker.Workflow.loginToGithub
                         ]
                       # Docker.Workflow.Project.steps
@@ -67,6 +67,31 @@ let ci =
                                 ( Docker.run
                                     Docker.Run::{ image = commitImage }
                                     opts.ciScript
+                                )
+                          //  { name = Some "Test" }
+                        , Workflow.Step::{
+                          , name = Some "Dhall cache"
+                          , uses = Some "actions/cache@v1"
+                          , `with` = Some
+                              ( toMap
+                                  { path = "~/.cache/dhall"
+                                  , key =
+                                      "dhall-cache-\${{ hashFiles('dhall/dependencies/*') }}"
+                                  }
+                              )
+                          }
+                        ,     Workflow.Step.bash
+                                ( Docker.runInCwd
+                                    Docker.Run::{
+                                    , image = dhallImage
+                                    , flags =
+                                      [ "--volume"
+                                      , "\$HOME/.cache:/root/.cache"
+                                      ]
+                                    }
+                                    ( Git.requireCleanWorkspaceAfterRunning
+                                        dhallRenderAndLint
+                                    )
                                 )
                           //  { name = Some "Check generated files" }
                         ]

@@ -2,8 +2,6 @@ let Docker = ../dependencies/Docker.dhall
 
 let Step = Docker.Step
 
-let Image = Docker.Image
-
 let Prelude = ../dependencies/Prelude.dhall
 
 let map = Prelude.List.map
@@ -11,7 +9,6 @@ let map = Prelude.List.map
 let Options =
       { cmd : List Text
       , workdir : Text
-      , sbt : Image.Type
       , initRequires : List Text
       , initTargets : List Text
       , updateRequires : List Text
@@ -21,10 +18,23 @@ let Options =
       , builderSetup : List Step.Type
       }
 
+let jdkVersion = "11.0.11"
+
+let sbtVersion = "1.5.4"
+
+let scalaVersion = "2.12.13"
+
+let sbt =
+    -- see https://hub.docker.com/r/hseeberger/scala-sbt/tags
+    -- for possible scala tag versions
+      Docker.Image::{
+      , name = "hseeberger/scala-sbt"
+      , tag = Some "${jdkVersion}_${sbtVersion}_${scalaVersion}"
+      }
+
 let default =
       { workdir = "/app"
       , cmd = [] : List Text
-      , sbt = Docker.Image::{ name = "mozilla/sbt " }
       , initRequires = [ "project" ]
       , initTargets = [ "about" ]
       , updateRequires = [ "build.sbt" ]
@@ -51,7 +61,7 @@ let builderSteps =
 
         in  Prelude.List.concat
               Step.Type
-              [ [ Step.fromAs options.sbt target ]
+              [ [ Step.fromAs sbt target ]
               , [ Step.workdir options.workdir ]
               , options.builderSetup
               , runSbt options options.initRequires options.initTargets
@@ -61,4 +71,11 @@ let builderSteps =
 
 let steps = \(options : Options) -> builderSteps options "builder"
 
-in  { Type = Options, default, steps, builderSteps }
+in  { Type = Options
+    , default
+    , steps
+    , builderSteps
+    , jdkVersion
+    , sbtVersion
+    , scalaVersion
+    }
