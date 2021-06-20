@@ -22,7 +22,7 @@ let jdkVersion = "11.0.11"
 
 let sbtVersion = "1.5.4"
 
-let scalaVersion = "2.12.13"
+let scalaVersion = "2.13.6"
 
 let sbt =
     -- see https://hub.docker.com/r/hseeberger/scala-sbt/tags

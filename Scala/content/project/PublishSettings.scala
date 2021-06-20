@@ -11,7 +11,7 @@ object ScalaProject {
   def publicProjectSettings(repoName: String) = Seq(
     publishTo := sonatypePublishToBundle.value,
     publishMavenStyle := true,
-    publishArtifact in Test := false,
+    Test / publishArtifact := false,
 
     licenses := Seq("MIT" -> url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url(s"https://github.com/timbertson/${repoName}")),
