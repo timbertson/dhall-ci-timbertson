@@ -13,12 +13,12 @@ let Bash = CI.Bash
 
 let Workflow = CI.Workflow
 
-let dhallVersion = "1.37"
+let dhallVersion = { tag = "1.37", full = "1.37.1" }
 
 let dhallImage =
       Docker.Image::{
       , name = "${Docker.Registry.githubPackages}/timbertson/dhall-ci/dhall"
-      , tag = Some dhallVersion
+      , tag = Some dhallVersion.tag
       }
 
 let Files =
@@ -105,7 +105,7 @@ let files =
             , `.tool-versions` = Render.TextFile::{
               , contents =
                   ''
-                  dhall ${dhallVersion}
+                  dhall ${dhallVersion.full}
                   ''
               }
             , `.ignore` = Render.TextFile::{
