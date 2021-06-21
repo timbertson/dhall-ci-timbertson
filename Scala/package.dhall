@@ -15,39 +15,40 @@ let ScalaFile =
               }
       }
 
-let publicLibraryFiles  = \(opts: {repo: Text}) ->
-      { `project/sonatype.sbt` = ScalaFile::{
-        , contents =
-            ''
-            addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
-            addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.7")
-            ''
-        }
-      , `project/src/main/scala/PublishSettings.scala` = ScalaFile::{
-        , contents = ./content/project/PublishSettings.scala as Text
-        }
-      , `release.sh` = Render.Executable::{
-        , contents =
-            ''
-            #!/usr/bin/env bash
-            sbt publishSigned sonatypeBundleRelease
-            ''
-        }
-      , `release.sbt` = ScalaFile::{
-        , contents =
-            ''
-            ThisBuild / scalaVersion := "${ScalaDocker.scalaVersion}"
-            ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
-            ThisBuild / scmInfo := Some(
-              ScmInfo(
-                url("https://github.com/timbertson/capsul"),
-                s"scm:git@github.com:timbertson/${opts.repo}.git"
+let publicLibraryFiles =
+      \(opts : { repo : Text }) ->
+        { `project/sonatype.sbt` = ScalaFile::{
+          , contents =
+              ''
+              addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
+              addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.7")
+              ''
+          }
+        , `project/src/main/scala/PublishSettings.scala` = ScalaFile::{
+          , contents = ./content/project/PublishSettings.scala as Text
+          }
+        , `release.sh` = Render.Executable::{
+          , contents =
+              ''
+              #!/usr/bin/env bash
+              sbt publishSigned sonatypeBundleRelease
+              ''
+          }
+        , `release.sbt` = ScalaFile::{
+          , contents =
+              ''
+              ThisBuild / scalaVersion := "${ScalaDocker.scalaVersion}"
+              ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
+              ThisBuild / scmInfo := Some(
+                ScmInfo(
+                  url("https://github.com/timbertson/capsul"),
+                  s"scm:git@github.com:timbertson/${opts.repo}.git"
+                )
               )
-            )
-            ${./content/release.sbt as Text}
-            ''
+              ${./content/release.sbt as Text}
+              ''
+          }
         }
-      }
 
 let strictFiles =
       { `project/strict.sbt` = ScalaFile::{

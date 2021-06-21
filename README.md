@@ -3,9 +3,7 @@
   You should NOT edit it manually, your changes will be lost.
 -->
 
-[![ci](https://github.com/timbertson/dhall-ci-timbertson/workflows/ci.yml/badge.svg)](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/ci.yml)
-
-[![update](https://github.com/timbertson/dhall-ci-timbertson/workflows/update.yml/badge.svg)](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/update.yml)
+[![ci](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/ci.yml/badge.svg)](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/ci.yml) [![update](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/update.yml/badge.svg)](https://github.com/timbertson/dhall-ci-timbertson/actions/workflows/update.yml)
 
 # dhall-ci-timbertson
 
