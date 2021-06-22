@@ -102,7 +102,11 @@ let ci =
 let selfUpdate =
       \(opts : Files.Type) ->
         CI.SelfUpdate.workflow
-          CI.SelfUpdate::{ dhallImage, update = dhallRenderAndLint }
+          CI.SelfUpdate::{
+          , dhallImage
+          , bump = [ "./dhall/bump dhall/dependencies/*" ]
+          , render = dhallRenderAndLint
+          }
 
 let files =
       \(opts : Files.Type) ->
