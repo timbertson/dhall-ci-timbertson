@@ -39,7 +39,7 @@ let Files =
 let appImage =
       \(repo : Text) ->
         Docker.Image::{
-        , name = "${Docker.Registry.githubPackages}/timbertson/${repo}/app"
+        , name = "${Docker.Registry.githubPackages}/timbertson/${repo}/${repo}"
         }
 
 let dhallRenderAndLint = [ "./dhall/render", "./dhall/fix --lint dhall" ]
