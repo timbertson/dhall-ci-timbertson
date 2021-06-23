@@ -63,8 +63,14 @@ let strictFiles =
 let Workflow = ../Workflow/package.dhall
 
 let Files =
+    -- release.sbt sets scalaVersion, which affects dependency resolution
       { Type = { repo : Text, docker : ScalaDocker.Type }
-      , default.docker = ScalaDocker.default
+      , default.docker
+        =
+              ScalaDocker.default
+          //  { updateRequires =
+                  ScalaDocker.default.updateRequires # [ "release.sbt" ]
+              }
       }
 
 let files =
@@ -90,7 +96,7 @@ let files =
                   ''
               }
             , Dockerfile = Render.TextFile::{
-              , contents = Docker.render (ScalaDocker.steps ScalaDocker::{=})
+              , contents = Docker.render (ScalaDocker.steps opts.docker)
               }
             }
 

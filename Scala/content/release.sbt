@@ -1,4 +1,6 @@
-ThisBuild / version := IO.read(new File("VERSION")).trim()
+import scala.util.Try
+
+ThisBuild / version := Try(IO.read(new File("VERSION")).trim()).getOrElse("0.0.0-SNAPSHOT")
 
 sonatypeProfileName := "net.gfxmonk"
 
