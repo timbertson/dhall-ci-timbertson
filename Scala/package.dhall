@@ -41,7 +41,7 @@ let publicLibraryFiles =
               ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
               ThisBuild / scmInfo := Some(
                 ScmInfo(
-                  url("https://github.com/timbertson/capsul"),
+                  url("https://github.com/timbertson/${opts.repo}"),
                   s"scm:git@github.com:timbertson/${opts.repo}.git"
                 )
               )
