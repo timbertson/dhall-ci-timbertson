@@ -20,7 +20,7 @@ let Options =
 
 let jdkVersion = "11.0.11"
 
-let sbtVersion = "1.5.4"
+let sbtVersion = "1.5.7"
 
 let scalaVersion = "2.13.6"
 
