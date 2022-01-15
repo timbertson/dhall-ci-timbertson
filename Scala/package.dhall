@@ -4,6 +4,8 @@ let Docker = ../dependencies/Docker.dhall
 
 let ScalaDocker = ./Docker.dhall
 
+let Workflow = ../Workflow/package.dhall
+
 let ScalaFile =
     -- install with `write` so that we don't have to copy
     -- generated/ files in during the docker build
@@ -50,33 +52,48 @@ let publicLibraryFiles =
           }
         }
 
-let strictFiles =
-      { `project/strict.sbt` = ScalaFile::{
-        , contents =
-            ''
-            addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.20")
-            addSbtPlugin("net.gfxmonk" % "sbt-strict-scope" % "2.1.0")
-            ''
+let Files =
+    -- release.sbt sets scalaVersion, which affects dependency resolution
+      { Type =
+          { repo : Text
+          , docker : ScalaDocker.Type
+          , strictPluginOverride : Optional Text
+          }
+      , default =
+        { strictPluginOverride = None Text
+        , docker =
+                ScalaDocker.default
+            //  { updateRequires =
+                    ScalaDocker.default.updateRequires # [ "release.sbt" ]
+                }
         }
       }
 
-let Workflow = ../Workflow/package.dhall
+let strictFiles =
+      \(opts : Files.Type) ->
+        { `project/strict.sbt` = ScalaFile::{
+          , contents =
+              let strictLine =
+                    merge
+                      { None =
+                          ''
+                          addSbtPlugin("net.gfxmonk" % "sbt-strict-scope" % "2.1.0")
+                          ''
+                      , Some = \(t : Text) -> t
+                      }
+                      opts.strictPluginOverride
 
-let Files =
-    -- release.sbt sets scalaVersion, which affects dependency resolution
-      { Type = { repo : Text, docker : ScalaDocker.Type }
-      , default.docker
-        =
-              ScalaDocker.default
-          //  { updateRequires =
-                  ScalaDocker.default.updateRequires # [ "release.sbt" ]
-              }
-      }
+              in  ''
+                  addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.20")
+                  ${strictLine}
+                  ''
+          }
+        }
 
 let files =
       \(opts : Files.Type) ->
             publicLibraryFiles { repo = opts.repo }
-        /\  strictFiles
+        /\  strictFiles opts
         /\  Workflow.files
               Workflow.Files::{
               , repo = opts.repo

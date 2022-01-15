@@ -1,8 +1,8 @@
 let Docker = ../dependencies/Docker.dhall
 
-let Step = Docker.Step
-
 let Prelude = ../dependencies/Prelude.dhall
+
+let Step = Docker.Step
 
 let map = Prelude.List.map
 
