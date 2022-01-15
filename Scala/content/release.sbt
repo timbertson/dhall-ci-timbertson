@@ -1,6 +1,5 @@
 import scala.util.Try
 
-ThisBuild / publishTo := sonatypePublishToBundle.value
 ThisBuild / version := Try(IO.read(new File("VERSION")).trim()).getOrElse("0.0.0-SNAPSHOT")
 ThisBuild / versionScheme := Some("early-semver")
 

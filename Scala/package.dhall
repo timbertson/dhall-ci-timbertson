@@ -82,7 +82,7 @@ let strictFiles =
                     merge
                       { None =
                           ''
-                          addSbtPlugin("net.gfxmonk" % "sbt-strict-scope" % "2.1.0")
+                          addSbtPlugin("net.gfxmonk" % "sbt-strict-scope" % "3.0.0")
                           ''
                       , Some = \(t : Text) -> t
                       }
