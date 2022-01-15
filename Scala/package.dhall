@@ -61,7 +61,7 @@ let publicLibraryFiles =
           , contents =
               ''
               ThisBuild / scalaVersion := "${opts.scalaVersion}"
-              ThisBuild / organisation := "net.gfxmonk"
+              ThisBuild / organization := "net.gfxmonk"
               ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
               ThisBuild / scmInfo := Some(
                 ScmInfo(
