@@ -17,8 +17,29 @@ let ScalaFile =
               }
       }
 
+let Files =
+      let dockerDefault =
+          -- release.sbt sets scalaVersion, which affects dependency resolution
+                ScalaDocker.default
+            //  { updateRequires =
+                    ScalaDocker.default.updateRequires # [ "release.sbt" ]
+                }
+
+      in  { Type =
+              { repo : Text
+              , docker : ScalaDocker.Type
+              , scalaVersion : Text
+              , strictPluginOverride : Optional Text
+              }
+          , default =
+            { strictPluginOverride = None Text
+            , docker = dockerDefault
+            , scalaVersion = dockerDefault.scalaVersion
+            }
+          }
+
 let publicLibraryFiles =
-      \(opts : { repo : Text }) ->
+      \(opts : Files.Type) ->
         { `project/sonatype.sbt` = ScalaFile::{
           , contents =
               ''
@@ -39,7 +60,8 @@ let publicLibraryFiles =
         , `release.sbt` = ScalaFile::{
           , contents =
               ''
-              ThisBuild / scalaVersion := "${ScalaDocker.scalaVersion}"
+              ThisBuild / scalaVersion := "${opts.scalaVersion}"
+              ThisBuild / organisation := "net.gfxmonk"
               ThisBuild / homepage := Some(url(s"https://github.com/timbertson/${opts.repo}"))
               ThisBuild / scmInfo := Some(
                 ScmInfo(
@@ -51,23 +73,6 @@ let publicLibraryFiles =
               ''
           }
         }
-
-let Files =
-    -- release.sbt sets scalaVersion, which affects dependency resolution
-      { Type =
-          { repo : Text
-          , docker : ScalaDocker.Type
-          , strictPluginOverride : Optional Text
-          }
-      , default =
-        { strictPluginOverride = None Text
-        , docker =
-                ScalaDocker.default
-            //  { updateRequires =
-                    ScalaDocker.default.updateRequires # [ "release.sbt" ]
-                }
-        }
-      }
 
 let strictFiles =
       \(opts : Files.Type) ->
@@ -92,7 +97,7 @@ let strictFiles =
 
 let files =
       \(opts : Files.Type) ->
-            publicLibraryFiles { repo = opts.repo }
+            publicLibraryFiles opts
         /\  strictFiles opts
         /\  Workflow.files
               Workflow.Files::{
@@ -113,7 +118,11 @@ let files =
                   ''
               }
             , Dockerfile = Render.TextFile::{
-              , contents = Docker.render (ScalaDocker.steps opts.docker)
+              , contents =
+                  Docker.render
+                    ( ScalaDocker.steps
+                        (opts.docker with scalaVersion = opts.scalaVersion)
+                    )
               }
             }
 

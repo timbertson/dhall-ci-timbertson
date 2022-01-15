@@ -16,21 +16,14 @@ let Options =
       , buildRequires : List Text
       , buildTargets : List Text
       , builderSetup : List Step.Type
+      , scalaVersion : Text
       }
 
 let jdkVersion = "11.0.11"
 
 let sbtVersion = "1.5.7"
 
-let scalaVersion = "2.13.6"
-
-let sbt =
-    -- see https://hub.docker.com/r/hseeberger/scala-sbt/tags
-    -- for possible scala tag versions
-      Docker.Image::{
-      , name = "hseeberger/scala-sbt"
-      , tag = Some "${jdkVersion}_${sbtVersion}_${scalaVersion}"
-      }
+let defaultScalaVersion = "2.13.6"
 
 let default =
       { workdir = "/app"
@@ -42,7 +35,15 @@ let default =
       , buildRequires = [] : List Text
       , buildTargets = [] : List Text
       , builderSetup = [] : List Step.Type
+      , scalaVersion = defaultScalaVersion
       }
+
+let sbt =
+      \(opts : Options) ->
+        Docker.Image::{
+        , name = "hseeberger/scala-sbt"
+        , tag = Some "${jdkVersion}_${sbtVersion}_${opts.scalaVersion}"
+        }
 
 let copy = \(path : Text) -> Step.copy path path
 
@@ -61,7 +62,7 @@ let builderSteps =
 
         in  Prelude.List.concat
               Step.Type
-              [ [ Step.fromAs sbt target ]
+              [ [ Step.fromAs (sbt options) target ]
               , [ Step.workdir options.workdir ]
               , options.builderSetup
               , runSbt options options.initRequires options.initTargets
@@ -71,11 +72,4 @@ let builderSteps =
 
 let steps = \(options : Options) -> builderSteps options "builder"
 
-in  { Type = Options
-    , default
-    , steps
-    , builderSteps
-    , jdkVersion
-    , sbtVersion
-    , scalaVersion
-    }
+in  { Type = Options, default, steps, builderSteps, jdkVersion, sbtVersion }

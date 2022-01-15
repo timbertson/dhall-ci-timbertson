@@ -13,7 +13,7 @@ let Bash = CI.Bash
 
 let Workflow = CI.Workflow
 
-let dhallVersion = { tag = "1.37", full = "1.37.1" }
+let dhallVersion = { tag = "1.40", full = "1.40.2" }
 
 let dhallImage =
       Docker.Image::{
