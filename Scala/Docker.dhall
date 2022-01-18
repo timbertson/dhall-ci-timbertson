@@ -19,11 +19,11 @@ let Options =
       , scalaVersion : Text
       }
 
-let jdkVersion = "11.0.11"
+let jdkVersion = "11.0.13"
 
 let sbtVersion = "1.5.7"
 
-let defaultScalaVersion = "2.13.6"
+let defaultScalaVersion = "2.13.7"
 
 let default =
       { workdir = "/app"
